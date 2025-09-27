@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SwasthaPad — Har Mahine Ki Saheli 🌸</title>
+<style>
+:root{--bg:#fff0f5;--card:#fff6fb;--accent:#d63384;--btn:#ff80aa;--muted:#6b4355}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; background:linear-gradient(180deg,var(--bg),#fffaf8); color:var(--muted);-webkit-font-smoothing:antialiased}
+.container{max-width:820px;margin:28px auto;padding:20px}
+.card{background:var(--card);border-radius:16px;padding:28px;box-shadow:0 10px 30px rgba(214,51,132,0.08);position:relative;overflow:hidden}
+.header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{font-weight:800;color:var(--accent);font-size:22px}
+.tag{color:#9b335a;font-size:14px;margin-top:4px}
+.steps{min-height:360px;position:relative;margin-top:18px}
+.step{position:absolute;inset:0;padding:10px;opacity:0;transform:translateX(40px) scale(.99);transition:all .45s cubic-bezier(.2,.9,.25,1);pointer-events:none}
+.step.active{opacity:1;transform:translateX(0) scale(1);pointer-events:auto}
+.center{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+h1,h2{color:var(--accent);margin:6px 0}
+.lead{color:#6b4355;margin:0}
+.controls{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.btn{background:var(--btn);color:white;border:none;padding:10px 18px;border-radius:10px;cursor:pointer;font-weight:700;box-shadow:0 8px 20px rgba(214,51,132,0.12);transition:transform .18s ease}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid rgba(214,51,132,0.1);box-shadow:none}
+.btn:hover{transform:translateY(-3px)}
+input[type=text], input[type=email], input[type=number], select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(214,51,132,0.12);margin-top:10px;font-size:15px;background:white}
+.options{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:10px}
+.option{padding:10px 14px;border-radius:10px;border:1px solid rgba(214,51,132,0.08);cursor:pointer;background:linear-gradient(180deg,rgba(255,255,255,0.85),rgba(255,247,250,0.85));min-width:160px;text-align:left}
+.option.selected{background:linear-gradient(90deg,#fff0f5,#ffe6f8);box-shadow:0 8px 20px rgba(214,51,132,0.06);border:1px solid rgba(214,51,132,0.16)}
+.card-footer{margin-top:12px;text-align:center;color:#8b5a74;font-size:13px}
+.summary{background:linear-gradient(90deg,#fff7fb,#fff1f6);padding:14px;border-radius:12px;border:1px solid rgba(214,51,132,0.06);text-align:left;white-space:pre-wrap;color:var(--muted)}
+@media(max-width:640px){.card{padding:18px}.brand{font-size:18px}.option{min-width:120px}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="card" role="main">
+    <div class="header">
+      <div>
+        <div class="brand" id="brandName">SwasthaPad 🌸</div>
+        <div class="tag" id="brandTag">Har Mahine Ki Saheli</div>
+      </div>
+      <div id="stepIndicator" class="small">Step 1 / 6</div>
+    </div>
+
+    <div class="steps">
+      <div class="step active" id="step-1" aria-hidden="false">
+        <div class="center">
+          <div style="font-size:48px">🌸</div>
+          <h1 id="landingTitle">SwasthaPad</h1>
+          <p class="lead" id="landingSub">Eco-friendly period care & at-home guidance via QR consulting</p>
+          <div class="controls"><button class="btn" onclick="goTo(2)">Next ➜</button></div>
+        </div>
+      </div>
+
+      <div class="step" id="step-2" aria-hidden="true">
+        <h2 id="langHead">Choose Language</h2>
+        <p class="lead" id="langSub">Select one — entire site will switch to the chosen language.</p>
+        <div class="options" role="tablist" style="margin-top:12px">
+          <div class="option" id="lang-en" onclick="setLang('en')">🇬🇧 English</div>
+          <div class="option" id="lang-hi" onclick="setLang('hi')">🇮🇳 हिंदी</div>
+          <div class="option" id="lang-mr" onclick="setLang('mr')">🇮🇳 मराठी</div>
+        </div>
+        <div class="controls" style="margin-top:18px">
+          <button class="btn ghost" onclick="goTo(1)">◀ Back</button>
+          <button class="btn" onclick="ensureLangThen(3)">Next ➜</button>
+        </div>
+      </div>
+
+      <div class="step" id="step-3" aria-hidden="true">
+        <h2 id="infoHead">Your name & email</h2>
+        <p class="lead" id="infoSub">We use this to personalize your summary (optional).</p>
+        <div style="max-width:520px;margin:12px auto">
+          <input type="text" id="inputName" placeholder="Name">
+          <input type="email" id="inputEmail" placeholder="Email (optional)">
+        </div>
+        <div class="controls">
+          <button class="btn ghost" onclick="goTo(2)">◀ Back</button>
+          <button class="btn" onclick="saveInfoAnd(4)">Next ➜</button>
+        </div>
+      </div>
+
+      <div class="step" id="step-4" aria-hidden="true">
+        <h2 id="issuesHead">Which issue are you facing?</h2>
+        <p class="lead" id="issuesSub">Tap one option that best matches your current problem.</p>
+        <div id="issuesList" class="options" role="list" style="margin-top:12px"></div>
+
+        <div class="controls" style="margin-top:18px">
+          <button class="btn ghost" onclick="goTo(3)">◀ Back</button>
+          <button class="btn" onclick="if(!state.issue) alert(TEXT[state.lang || 'en'].selectIssue); else goTo(5)">Next ➜</button>
+        </div>
+      </div>
+
+      <div class="step" id="step-5" aria-hidden="true">
+        <h2 id="durHead">How long have you faced this?</h2>
+        <p class="lead" id="durSub">Choose a preset or enter a custom number.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:12px">
+          <div class="option" onclick="setDuration(3,'days')">3 days</div>
+          <div class="option" onclick="setDuration(7,'days')">1 week</div>
+          <div class="option" onclick="setDuration(14,'days')">2 weeks</div>
+          <div class="option" onclick="setDuration(30,'days')">1 month</div>
+          <div class="option" onclick="setDuration(90,'days')">3 months</div>
+        </div>
+
+        <div style="max-width:520px;margin:12px auto;text-align:left">
+          <label class="lead" id="customLabel">Or enter custom:</label>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <input type="number" id="customNum" min="0" placeholder="Number" style="width:40%">
+            <select id="customUnit" style="width:60%"><option value="days">Days</option><option value="weeks">Weeks</option><option value="months">Months</option></select>
+          </div>
+        </div>
+
+        <div class="controls" style="margin-top:16px">
+          <button class="btn ghost" onclick="goTo(4)">◀ Back</button>
+          <button class="btn" onclick="confirmDuration()">Next ➜</button>
+        </div>
+      </div>
+
+      <div class="step" id="step-6" aria-hidden="true">
+        <h2 id="sumHead">Summary & Advice</h2>
+        <div class="summary" id="summaryBox">—</div>
+
+        <h3 style="margin-top:12px" id="adviceHead">Detailed Advice</h3>
+        <div class="summary" id="adviceBox">—</div>
+
+        <div class="controls" style="margin-top:14px">
+          <button class="btn ghost" onclick="goTo(5)">◀ Back</button>
+          <button class="btn" onclick="goTo(7)">Finish ➜</button>
+        </div>
+      </div>
+
+      <div class="step" id="step-7" aria-hidden="true">
+        <div class="center">
+          <div style="font-size:46px">💜</div>
+          <h2 id="thanksTitle">Thank you for visiting SwasthaPad!</h2>
+          <p class="lead" id="thanksSub">We hope our guidance helps — take care! ✨</p>
+          <div class="controls"><button class="btn" onclick="restart()">Start Over ↺</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer">SwasthaPad • Eco-friendly care • QR consulting</div>
+  </div>
+</div>
+
+<script>
+const state = { lang:'en', name:'', email:'', issue:'', durationDays:0, durationPretty:'' };
+const TEXT = {
+  en:{ selectIssue:'Please select an issue before continuing.', selectLang:'Please select a language first.' },
+  hi:{ selectIssue:'कृपया आगे बढ़ने से पहले कोई समस्या चुनें।', selectLang:'कृपया पहले एक भाषा चुनें।' },
+  mr:{ selectIssue:'कृपया पुढे जाण्यापूर्वी एखादी समस्या निवडा.', selectLang:'कृपया प्रथम भाषा निवडा.' }
+};
+const CONTENT = {
+  en:{ issues:[{k:'PCOD',title:'PCOD / PCOS symptoms'},{k:'Cramps',title:'Severe cramps / Stomach pain'},{k:'Bleeding',title:'Heavy bleeding (Menorrhagia)'},{k:'Bloating',title:'Bloating / Over floating'},{k:'Irregular',title:'Irregular periods'},{k:'PMS',title:'Premenstrual Syndrome (PMS)'},{k:'Mood',title:'Mood swings / Stress'}], advice:{ PCOD:`🌱 PCOD / PCOS — Advice:\n- Add flax seeds, chia seeds, leafy vegetables\n- Yoga: Butterfly pose, Surya Namaskar\n- Daily 30 min walking/exercise\n- Avoid sugar, fried & processed foods\n- If >3 months consult a gynecologist`, Cramps:`🍵 Cramps (Dysmenorrhea):\n- Ginger/chamomile tea\n- Hot water bag on lower abdomen\n- Yoga: Child’s Pose, Cat-Cow\n- Eat light; avoid oily foods\n- Rest & heat therapy`, Bleeding:`🥭 Heavy bleeding:\n- Iron-rich foods (spinach, beetroot, dates)\n- Drink plenty of water\n- Yoga: Reclining Bound Angle Pose\n- Avoid caffeine & spicy foods\n- If persists >2 cycles, consult doctor`, Bloating:`💧 Bloating:\n- Warm water\n- Fennel/peppermint tea\n- Light walking to help digestion\n- Fiber-rich vegetables\n- Reduce salt & sodas`, Irregular:`🧘 Irregular periods:\n- Practice Kapalbhati, Anulom Vilom\n- Balanced diet; avoid junk\n- Regular sleep & exercise\n- If >6 months, consult doctor`, PMS:`🥭 PMS:\n- Eat fruits, nuts & omega-3 foods\n- Yoga: Cobra, Bridge pose\n- 20–30 min daily walk\n- Herbal teas (ginger/cinnamon)\n- Avoid excessive coffee`, Mood:`🎶 Mood swings/Stress:\n- Calming music\n- 10 min meditation\n- Small piece dark chocolate\n- Sunlight & short outdoor walk\n- Maintain sleep routine` } },
+  hi:{ issues:[{k:'PCOD',title:'पीसीओडी / पीसीओएस के लक्षण'},{k:'Cramps',title:'तेज़ ऐंठन / पेट में दर्द'},{k:'Bleeding',title:'भारी रक्तस्राव (मेंनोरेजिया)'},{k:'Bloating',title:'फुलाव / पेट फूलना'},{k:'Irregular',title:'अनियमित पीरियड्स'},{k:'PMS',title:'प्रीमेंस्ट्रुअल सिंड्रोम (PMS)'},{k:'Mood',title:'मूड स्विंग्स / तनाव'}], advice:{ PCOD:`🌱 पीसीओडी / पीसीओएस — सलाह:\n- अलसी, चिया बीज, हरी पत्तेदार सब्जियाँ शामिल करें\n- योग: बटरफ्लाई पोज़, सूर्य नमस्कार\n- रोज 30 मिनट चलें/व्यायाम करें\n- चीनी, तला-भुना और प्रोसेस्ड खाना कम करें\n- यदि >3 महीने, स्त्रीरोग विशेषज्ञ से सलाह लें`, Cramps:`🍵 ऐंठन / पेट दर्द:\n- अदरक/कैमोमाइल चाय\n- निचले पेट पर गरम पानी की थैली\n- योग: बालासन, मार्जरी आसन\n- हल्का भोजन; तला हुआ बचें\n- आराम और गर्मी से राहत`, Bleeding:`🥭 भारी रक्तस्राव:\n- आयरन-युक्त आहार (पालक, चुकंदर, खजूर)\n- पर्याप्त पानी पिएं\n- योग: सुप्त बद्ध कोणासन\n- कैफीन और तीखा भोजन टालें\n- यदि >2 चक्र बने रहें तो डॉक्टर से मिलें`, Bloating:`💧 पेट फूलना:\n- गर्म पानी\n- सौंफ/पुदीना की चाय\n- पाचन के लिए हल्की सैर\n- फाइबर युक्त सब्जियाँ\n- नमक और सोडा घटाएँ`, Irregular:`🧘 अनियमित पीरियड्स:\n- कपालभाति, अनुलोम-विलोम\n- संतुलित आहार; जंक कम करें\n- नियमित नींद व व्यायाम\n- यदि >6 महीने, डॉक्टर से जांच कराएँ`, PMS:`🥭 PMS:\n- फल, मेवे और ओमेगा-3 खाद्य लें\n- योग: भुजंग, ब्रिज पोज़\n- 20–30 मिनट रोज वॉक\n- हर्बल चाय (अदरक/दालचीनी)\n- अधिक कॉफी से बचें`, Mood:`🎶 मूड स्विंग्स/तनाव:\n- शांत संगीत\n- 10 मिनट ध्यान\n- एक छोटा काला चॉकलेट\n- धूप में थोड़ी सैर\n- अच्छी नींद अनुसूची` } },
+  mr:{ issues:[{k:'PCOD',title:'पीसीओडी / पीसीओएस लक्षण'},{k:'Cramps',title:'तीव्र ऐंठन / पोटदुखी'},{k:'Bleeding',title:'जास्त रक्तस्त्राव (मेंनोरेजिया)'},{k:'Bloating',title:'फुगवटा / पोट फुगणे'},{k:'Irregular',title:'अनियमित पाळी'},{k:'PMS',title:'प्रीमेंस्ट्रुअल सिंड्रोम (PMS)'},{k:'Mood',title:'मूड स्विंग्स / ताण'}], advice:{ PCOD:`🌱 पीसीओडी / पीसीओएस — सल्ला:\n- जवस, चिया बिया, हिरव्या पालेभाज्या आहारात घाला\n- योग: बटरफ्लाय पोझ, सूर्यनमस्कार\n- दररोज 30 मिनिट चालणे/व्यायाम\n- साखर, तळलेले आणि प्रक्रियातले अन्न कमी करा\n- जर >3 महिने असतील तर डॉक्टरांचा सल्ला घ्या`, Cramps:`🍵 ऐंठन / पोटदुखी:\n- आलं/कॅमोमाइल चहा\n- पोटावर गरम पाण्याची पिशवी\n- योग: बालासन, मार्जरी आसन\n- हलका आहार; तळलेले टाळा\n- विश्रांती` , Bleeding:`🥭 जास्त रक्तस्त्राव:\n- लोहयुक्त अन्न (पालक, बीट, खजूर)\n- भरपूर पाणी प्या\n- योग: सुप्त बद्ध कोणासन\n- कॅफीन व तिखट पदार्थ टाळा\n- >2 सायकल असल्यास डॉक्टरांकडे जा`, Bloating:`💧 फुगवटा:\n- गरम पाणी\n- सौंफ/पुदीन्याची चहा\n- हलके चालणे\n- फायबरयुक्त भाज्या\n- मीठ व सोडा कमी करा`, Irregular:`🧘 अनियमित पाळी:\n- कपालभाति, अनुलोम-विलोम\n- संतुलित आहार; जंक कमी करा\n- नियमित झोप व व्यायाम\n- जर >6 महिने असतील तर डॉक्टरांना दाखवा`, PMS:`🥭 PMS:\n- फळे, मेवे व ओमेगा-3 आहार\n- योग: कोब्रा, ब्रिज पोझ\n- दररोज 20-30 मिनिट चालणे\n- हर्बल चहा\n- कॉफी कमी करा`, Mood:`🎶 मूड स्विंग्स/ताण:\n- शांत संगीत\n- 10 मिनिट ध्यान\n- डार्क चॉकलेटचा छोटा तुकडा\n- सूर्यप्रकाश व चालणे\n- चांगला झोपेचा नियम` } }
+};
+
+function updateStepIndicator(n){ document.getElementById('stepIndicator').innerText = `Step ${Math.min(n,6)} / 6`; }
+
+function goTo(n){
+  document.querySelectorAll('.step').forEach(s=>{ s.classList.remove('active'); s.setAttribute('aria-hidden','true'); });
+  const el = document.getElementById('step-'+n);
+  if(el){ el.classList.add('active'); el.setAttribute('aria-hidden','false'); updateStepIndicator(n); }
+  if(n===4) renderIssues();
+  if(n===6) renderSummaryAndAdvice();
+}
+
+function ensureLangThen(next){ if(!state.lang){ alert(TEXT[state.lang || 'en'].selectLang); return; } goTo(next); }
+
+function setLang(l){
+  state.lang = l;
+  ['en','hi','mr'].forEach(x=>{ const e = document.getElementById('lang-'+x); if(e) e.classList.toggle('selected', x===l); });
+  document.getElementById('brandName').innerText = (l==='en'?'SwasthaPad 🌸': (l==='hi'?'स्वस्थ पैड 🌸':'स्वस्थ पॅड 🌸'));
+  document.getElementById('brandTag').innerText = (l==='en'?'Har Mahine Ki Saheli': (l==='hi'?'हर महीने की सहेली':'दर महिन्याची सखी'));
+  document.getElementById('landingTitle').innerText = (l==='en'?'SwasthaPad': (l==='hi'?'स्वस्थपैड':'स्वस्थपॅड'));
+  document.getElementById('landingSub').innerText = (l==='en'?'Eco-friendly period care & at-home guidance via QR consulting': (l==='hi'?'पर्यावरण के अनुकूल पीरियड केयर और घर पर मार्गदर्शन via QR':'पर्यावरणपूरक पिरियड केअर आणि घरगुती मार्गदर्शन via QR'));
+  document.getElementById('langHead').innerText = (l==='en'?'Choose Language': (l==='hi'?'भाषा चुनें':'भाषा निवडा'));
+  document.getElementById('langSub').innerText = (l==='en'?'Select one — entire site will switch to the chosen language.': (l==='hi'?'एक चुनें — पूरी साइट चुनी गई भाषा में बदल जाएगी।':'एक निवडा — संपूर्ण साईट निवडलेल्या भाषेत बदलेल.'));
+  document.getElementById('infoHead').innerText = (l==='en'?'Your name & email': (l==='hi'?'आपका नाम और ईमेल':'तुमचे नाव व ईमेल'));
+  document.getElementById('infoSub').innerText = (l==='en'?'We use this to personalize your summary (optional).': (l==='hi'?'हम इसका उपयोग आपका सारांश निजीकरण के लिए करते हैं (वैकल्पिक)।':'आम्ही हे तुमचा सारांश वैयक्तिक करण्यासाठी वापरतो (ऐच्छिक).'));
+  document.getElementById('issuesHead').innerText = (l==='en'?'Which issue are you facing?': (l==='hi'?'आप किस समस्या का सामना कर रही हैं?':'तुम्हाला कोणती समस्या आहे?'));
+  document.getElementById('issuesSub').innerText = (l==='en'?'Tap one option that best matches your current problem.': (l==='hi'?'अपनी वर्तमान समस्या के सबसे उपयुक्त विकल्प पर टैप करें।':'सध्या अनुभवत असलेल्या समस्येशी जुळणारा पर्याय निवडा.'));
+  document.getElementById('durHead').innerText = (l==='en'?'How long have you faced this?': (l==='hi'?'आप इसे कितने समय से अनुभव कर रही हैं?':'ही समस्या तुम्हाला किती काळापासून आहे?'));
+  document.getElementById('durSub').innerText = (l==='en'?'Choose a preset or enter a custom number.': (l==='hi'?'कोई प्रीसेट चुनें या कस्टम मान दर्ज करें।':'पूर्वनिर्धारित निवडा किंवा कस्टम संख्या भरा.'));
+  document.getElementById('customLabel').innerText = (l==='en'?'Or enter custom:': (l==='hi'?'या कस्टम दर्ज करें:' :'किंवा कस्टम प्रविष्ट करा:'));
+  document.getElementById('sumHead').innerText = (l==='en'?'Summary & Advice': (l==='hi'?'सारांश और सलाह':'सारांश व सल्ला'));
+  document.getElementById('adviceHead').innerText = (l==='en'?'Detailed Advice': (l==='hi'?'विस्तृत सलाह':'तपशीलवार सल्ला'));
+  document.getElementById('thanksTitle').innerText = (l==='en'?'Thank you for visiting SwasthaPad!': (l==='hi'?'स्वस्थ पैड पर आने के लिए धन्यवाद!':'साइटला भेट दिल्याबद्दल धन्यवाद!'));
+  document.getElementById('thanksSub').innerText = (l==='en'?'We hope our guidance helps — take care! ✨': (l==='hi'?'हमें आशा है कि हमारी सलाह मदद करेगी — ख्याल रखें! ✨':'आशा आहे की आमचा सल्ला उपयुक्त ठरेल — काळजी घ्या! ✨'));
+  renderIssues();
+}
+
+function renderIssues(){
+  const container = document.getElementById('issuesList'); container.innerHTML='';
+  const list = CONTENT[state.lang || 'en'].issues;
+  list.forEach(item=>{ const div=document.createElement('div'); div.className='option'; div.innerText=item.title; div.dataset.key=item.k; div.onclick=()=>{ document.querySelectorAll('#issuesList .option').forEach(o=>o.classList.remove('selected')); div.classList.add('selected'); state.issue=item.k; }; container.appendChild(div); });
+}
+
+function setDuration(days, unit='days'){ state.durationDays=days; document.getElementById('customNum').value=days; document.getElementById('customUnit').value=unit; }
+function confirmDuration(){ let num=parseInt(document.getElementById('customNum').value); const unit=document.getElementById('customUnit').value; if(num && num>0){ if(unit==='weeks') num=num*7; if(unit==='months') num=num*30; state.durationDays=num; } if(!state.durationDays) state.durationDays=3; state.durationPretty=humanReadable(state.durationDays,state.lang); goTo(6); }
+function humanReadable(days,lang){ if(days<7) return days + (lang==='en'?' day(s)':(lang==='hi'?' दिन':' दिवस')); if(days<30){ const w=Math.round(days/7); return w + (lang==='en'?' week(s)':(lang==='hi'?' सप्ताह':' आठवडे')); } const m=Math.round(days/30); return m + (lang==='en'?' month(s)':(lang==='hi'?' महीना':' महिने')); }
+function saveInfoAnd(next){ state.name=document.getElementById('inputName').value.trim()||'(Anonymous)'; state.email=document.getElementById('inputEmail').value.trim()||'—'; goTo(next); }
+
+function renderSummaryAndAdvice(){ const lang=state.lang||'en'; const t=CONTENT[lang]; const issueTitle=(t.issues.find(x=>x.k===state.issue)||{}).title||state.issue||'(—)'; const summary=`Name: ${state.name}\nEmail: ${state.email}\nLanguage: ${lang}\nIssue: ${issueTitle}\nDuration: ${state.durationPretty}\n`; document.getElementById('summaryBox').innerText=summary; const advice=(t.advice&&t.advice[state.issue])||CONTENT['en'].advice[state.issue]||'Please consult a healthcare professional if symptoms persist.'; let note=''; if(state.durationDays>=90) note=(lang==='en'?'\n\n⚠️ You have been experiencing this for a long time. Please consult a healthcare professional.':(lang==='hi'?'\n\n⚠️ यह लक्षण लंबे समय से चल रहे हैं — कृपया डॉक्टर से संपर्क करें।':'\n\n⚠️ ही समस्या दीर्घकाळ चालत असेल तर कृपया डॉक्टरांचा सल्ला घ्या।')); else if(state.durationDays>=30) note=(lang==='en'?'\n\n🔎 Consider medical check-up if symptoms persist.':(lang==='hi'?'\n\n🔎 यदि लक्षण बने रहें तो चिकित्सा जाँच पर विचार करें।':'\n\n🔎 लक्षण टिकून राहिल्यास वैद्यकीय तपासणीचा विचार करा।')); document.getElementById('adviceBox').innerText=advice+note; }
+
+function restart(){ state.lang='en'; state.name=''; state.email=''; state.issue=''; state.durationDays=0; state.durationPretty=''; document.getElementById('inputName').value=''; document.getElementById('inputEmail').value=''; document.getElementById('customNum').value=''; document.getElementById('customUnit').value='days'; document.querySelectorAll('#issuesList .option').forEach(o=>o.classList.remove('selected')); setLang('en'); goTo(1); }
+
+// init
+setLang('en'); updateStepIndicator(1);
+</script>
+</body>
+</html>
